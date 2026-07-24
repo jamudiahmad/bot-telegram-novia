@@ -276,7 +276,26 @@ bot.on('message', async (msg) => {
     } else if (textoMin.includes('te extraño')) {
         bot.sendMessage(chatId, "🥺 ¡Alguien por aquí está extrañando mucho! Mándense un abrazo virtual con `/abrazo`");
     }
+if (texto === '🎰 Dado / Volado' || texto === '/volado') {
+        const resultadoMoneda = Math.random() < 0.5 ? "🪙 *Cara* (Gana el que eligió Cara)" : "🪙 *Cruz* (Gana el que eligió Cruz)";
+        const dado = Math.floor(Math.random() * 6) + 1;
 
+        const retosDado = {
+            1: "📸 *Reto 1:* Envía una selfie graciosa o tierna del momento.",
+            2: "🎙️ *Reto 2:* Manda una nota de voz susurrando algo cariñoso.",
+            3: "💬 *Reto 3:* Cuenta un recuerdo bonito de los dos que no me hayas dicho antes.",
+            4: "🫣 *Reto 4:* Responde una pregunta incómoda o coqueta del otro.",
+            5: "👑 *Reto 5:* Eliges la peli/juego para la próxima llamada.",
+            6: "🔥 *Reto 6:* ¡Comodín! Cumple un deseo o reto rápido que pida el otro."
+        };
+
+        const mensaje = `🎲 *LANZAMIENTO MÁGICO* 🎲\n\n` +
+                        `• **Volado:** ${resultadoMoneda}\n` +
+                        `• **Dado:** Tocó el número *${dado}*\n\n` +
+                        `👉 **Acción del Dado:**\n${retosDado[dado]}`;
+
+        bot.sendMessage(chatId, mensaje, { parse_mode: 'Markdown' });
+    }
     // BOTONES DEL TECLADO
     if (texto === '🎮 Calendario LDR') bot.sendMessage(chatId, obtenerCalendarioHoy(), { parse_mode: 'Markdown' });
     if (texto === '🎭 Reto de Imitación') bot.sendMessage(chatId, modoImitacion[Math.floor(Math.random() * modoImitacion.length)], { parse_mode: 'Markdown' });
