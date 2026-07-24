@@ -1,4 +1,5 @@
 const http = require('http');
+const { verdadesPicantes } = require('./verdadesPicantes');
 const port = process.env.PORT || 3000;
 
 http.createServer((req, res) => {
@@ -101,15 +102,33 @@ const verdadesPicantes = [
     "¿Qué fue lo primero que pensaste de mí cuando empezamos a hablar por chat?",
     "¿Qué es lo más atrevido que te gustaría decirme en llamada cuando estemos a solas?",
     "¿Qué es lo que más te atrae de mi voz o mi forma de hablar?",
-    "¿Qué harías si en este momento te enviara un mensaje picante?"
+    "¿Qué harías si en este momento te enviara un mensaje picante?",
+    "cuando fue la ultima vez que te mojaste o te excitaste pensando en mi?",
+    "¿Cuál es tu fantasía más atrevida que te gustaría cumplir conmigo?",
+    "¿Qué parte de mi cuerpo te resulta más irresistible y por qué?",
+    "Si pudieras elegir un lugar para tener una cita virtual muy íntima, ¿dónde sería y qué haríamos?",
+    "¿Qué es lo más travieso que harias en una videollamada conmigo?",
+    "Si tuvieras que describir nuestra relación en una palabra, ¿cuál sería y por qué?",
+    " Si pudieras enviarme un mensaje provocativo ahora mismo, ¿qué dirías?",
+    "¿Qué es lo más atrevido que te gustaría que hiciéramos juntos en una videollamada?",
+    "Si pudieras elegir un juego picante para jugar en llamada, ¿cuál sería y cómo lo jugaríamos?",
+    "¿Cuál es tu recuerdo más travieso o excitante de nosotros hasta ahora?",
+    "Si tuvieras que describir nuestra química en una frase, ¿cuál sería?"
 ];
-
+exports.verdadesPicantes = verdadesPicantes;
 const retosPicantes = [
     "📷 Manda una foto sexy o provocativa por el chat ahora mismo.",
     "🎙️ Manda una nota de voz de 10 segundos susurrándome algo coqueto al oído.",
     "🎥 Graba un video corto enviándome un beso coqueto frente a la cámara.",
-    "💬 Escríbeme un mensaje corto diciéndome algo coqueto."
-];
+    "💬 Escríbeme un mensaje corto diciéndome algo coqueto.",
+    "📷 manda un video bailando provocativamente de 15 min,si tu pareja se calienta recibe una penalización",
+    "📷 tocate en la videollamada por 1 min. si tu pareja se moja/se excita recibe una penalizacion",
+    "💬 enviale un mensaje provocativo a tu pareja y si se excita recibe una penalizacion",
+    "🎥 graba un video provocativo y enviaselo a tu pareja, si se excita recibe una penalizacion",
+    "💬 dile a tu pareja que te haga un reto provocativo y si se excita recibe una penalizacion",
+    "🎥 graba un video provocativo y enviaselo a tu pareja, si se excita recibe una penalizacion",
+    "💬reta a tu pareja a un desafio sin limites"
+    ];
 
 // --- MENÚ PRINCIPAL ---
 bot.onText(/\/start/, (msg) => {
@@ -124,7 +143,7 @@ bot.onText(/\/start/, (msg) => {
             resize_keyboard: true
         }
     };
-    bot.sendMessage(msg.chat.id, "¡Hola mi amor! ❤️ Tu bot de juegos listo para las llamadas. ¿Qué elegimos hoy?", opciones);
+    bot.sendMessage(msg.chat.id, "llego el desmadre,¿estan listos para el caos?", opciones);
 });
 
 // --- RESPUESTAS DE MENÚ ---
