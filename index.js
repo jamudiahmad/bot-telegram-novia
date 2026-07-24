@@ -972,7 +972,7 @@ bot.on('message', async (msg) => {
         });
     }
 if (texto === '💖 100 Razones' || texto === '/razones') {
-        bot.sendMessage(chatId, `💖 *Razón para quererte:* \n\n${razonesParaQuerte[Math.floor(Math.random() * razonesParaQuerte.length)]}`);
+        bot.sendMessage(chatId, `💖 *Razón para quererte:* \n\n${razonesParaQuerte[Math.floor(Math.random() * razonesParaQuerte.length)]}`, { parse_mode: 'Markdown' });
     }
 
     if (texto === '❤️ Te Extraño' || texto === '/extraño') {
@@ -1133,3 +1133,19 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
 });
 
 console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
+
+// Manejador para los botones interactivos de Verdad / Reto
+bot.on('callback_query', (query) => {
+    const chatId = query.message.chat.id;
+
+    if (query.data === 'v') {
+        const verdad = verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)];
+        bot.sendMessage(chatId, `🗣️ *VERDAD:* \n\n${verdad}`, { parse_mode: 'Markdown' });
+    } else if (query.data === 'r') {
+        const reto = retosPicantes[Math.floor(Math.random() * retosPicantes.length)];
+        bot.sendMessage(chatId, `🔥 *RETO:* \n\n${reto}`, { parse_mode: 'Markdown' });
+    }
+
+    // Le avisa a Telegram que se presionó el botón para quitar el relojito de carga
+    bot.answerCallbackQuery(query.id);
+});
