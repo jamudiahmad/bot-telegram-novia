@@ -144,7 +144,7 @@ bot.onText(/\/start/, (msg) => {
                 ['💬 Preguntas Profundas', '🎲 Castigo para Llamada'],
                 ['🧠 Trivia de Pareja', '🔮 Bola 8 Mágica'],
                 ['🤔 ¿Qué prefieres?', '🎰 Dado / Volado'],
-                ['🔥 Verdad / Reto']
+                ['🌍 Hora y Clima', '🔥 Verdad / Reto']
             ],
             resize_keyboard: true
         }
@@ -158,8 +158,7 @@ bot.onText(/\/ayuda/, (msg) => {
     const ayudaTxt = `✨ **LISTA DE COMANDOS DISPONIBLES** ✨\n\n` +
                      `🎲 **Juegos y Diversión:**\n` +
                      `• /volado - Lanza un dado o moneda.\n` +
-                     `• /aventura - Inicia una mini aventura.\n` +
-                     `• /compatibilidad - Revisa la compatibilidad del día.\n\n` +
+                     `• /clima - Muestra la hora de México y Venezuela.\n\n` +
                      `📌 **Organizador y Recuerdos:**\n` +
                      `• /capsula [mensaje] - Guarda un mensaje secreto en la cápsula.\n` +
                      `• /vercapsula - Lee los mensajes guardados.\n` +
@@ -205,7 +204,40 @@ bot.on('message', (msg) => {
         bot.sendMessage(chatId, qp);
     }
 
-    // DADO Y VOLADO (CON RETOS INCLUIDOS)
+    // HORA Y CLIMA (MÉXICO Y VENEZUELA)
+    if (texto === '🌍 Hora y Clima' || texto === '/clima') {
+        const ahora = new Date();
+        
+        const horaMexico = ahora.toLocaleTimeString('es-MX', { 
+            timeZone: 'America/Mexico_City', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        });
+
+        const horaVenezuela = ahora.toLocaleTimeString('es-VE', { 
+            timeZone: 'America/Caracas', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: true 
+        });
+
+        const fechaFormato = ahora.toLocaleDateString('es-ES', { 
+            weekday: 'long', 
+            day: 'numeric', 
+            month: 'long' 
+        });
+
+        const mensajeClima = `🌍 *HORARIOS A DISTANCIA* 🕒\n\n` +
+                             `📅 **Fecha:** ${fechaFormato}\n\n` +
+                             `🇲🇽 **México (CDMX):** ${horaMexico}\n` +
+                             `🇻🇪 **Venezuela:** ${horaVenezuela}\n\n` +
+                             `💡 *Consejo:* ¡Revisen la diferencia de hora antes de coordinar sus llamadas! 📞✨`;
+
+        bot.sendMessage(chatId, mensajeClima, { parse_mode: 'Markdown' });
+    }
+
+    // DADO Y VOLADO
     if (texto === '🎰 Dado / Volado' || texto === '/volado') {
         const resultadoMoneda = Math.random() < 0.5 ? "🪙 *Cara* (Gana Cara)" : "🪙 *Cruz* (Gana Cruz)";
         const dado = Math.floor(Math.random() * 6) + 1;
