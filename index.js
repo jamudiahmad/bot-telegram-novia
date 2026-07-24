@@ -1,17 +1,6 @@
 const http = require('http');
-const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
-const axios = require('axios');
-const { GoogleGenAI } = require('@google/genai');
-const verdadesPicantes = [
-    "¿Qué fue lo primero que pensaste cuando viste una foto mía por primera vez?",
-    "¿Cuál es tu fantasía o momento más coqueto que quisieras vivir cuando nos veamos?",
-    "¿Qué prenda de vestir mía te parece la más atractiva cuando nos vemos por llamada?",
-    "Si tuvieras que describir nuestro nivel de química en una palabra, ¿cuál sería?",
-    "¿Qué es algo travieso que has pensado sobre mí y no me has contado?",
-];
-
-// --- SERVIDOR HTTP PA' MANTENER RENDER ACTIVO ---
 const port = process.env.PORT || 3000;
+
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Bot activo 24/7');
@@ -19,23 +8,10 @@ http.createServer((req, res) => {
   console.log(`Servidor web escuchando en el puerto ${port}`);
 });
 
-// --- INICIALIZACIÓN BOT & IA ---
+const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
+
 const token = process.env.TELEGRAM_TOKEN;
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
 const bot = new TelegramBot(token, { polling: true });
-
-let ai;
-if (GEMINI_API_KEY) {
-  ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-}
-
-// --- BASES DE DATOS EN MEMORIA (ALMACENAMIENTO DE DATOS) ---
-const capsuleStorage = [];     // Cápsula del tiempo / Buzón
-const metasStorage = [];       // Metas y Deseos
-const seriesVistasStorage = [];// Registro de series vistas
-const userPoints = {};         // Buscador de Puntos
 
 // --- CALENDARIO DINÁMICO A DISTANCIA ---
 function obtenerCalendarioHoy() {
@@ -73,7 +49,7 @@ function obtenerCalendarioHoy() {
     return `🗓️ *CALENDARIO A DISTANCIA* ${tipoSemana}\n\n👉 *Hoy toca:* \n${juegoHoy}\n\n_(Rota automáticamente cada semana para romper la rutina)_`;
 }
 
-// --- BANCOS DE DATOS Y NUEVAS FUNCIONES ---
+// --- BANCO DE DATOS DE ENTERTENIMIENTO ---
 const modoImitacion = [
     "🎭 *Reto de Imitación (2 Minutos):*\nAmbos deben hablar en la llamada usando un **acento dramático de telenovela**.",
     "🎭 *Reto de Imitación (2 Minutos):*\nTienen que responder a todo lo que diga el otro susurrando como si fuera un **secreto confidencial**.",
@@ -121,6 +97,25 @@ const quePrefieresLDR = [
     "🤔 ¿Prefieres: Ver una peli de terror juntos 👻 O una maratón de comedia 🍿?",
 ];
 
+const verdadesPicantes = [
+    "¿Qué fue lo primero que pensaste de mí cuando empezamos a hablar por chat?",
+    "¿Qué es lo más atrevido que te gustaría decirme en llamada cuando estemos a solas?",
+    "¿Qué es lo que más te atrae de mi voz o mi forma de hablar?",
+    "¿Qué harías si en este momento te enviara un mensaje picante?",
+    "cuando fue la ultima vez que te mojaste o te excitaste pensando en mi?",
+    "¿Cuál es tu fantasía más atrevida que te gustaría cumplir conmigo?",
+    "¿Qué parte de mi cuerpo te resulta más irresistible y por qué?",
+    "Si pudieras elegir un lugar para tener una cita virtual muy íntima, ¿dónde sería y qué haríamos?",
+    "¿Qué es lo más travieso que harias en una videollamada conmigo?",
+    "Si tuvieras que describir nuestra relación en una palabra, ¿cuál sería y por qué?",
+    " Si pudieras enviarme un mensaje provocativo ahora mismo, ¿qué dirías?",
+    "¿Qué es lo más atrevido que te gustaría que hiciéramos juntos en una videollamada?",
+    "Si pudieras elegir un juego picante para jugar en llamada, ¿cuál sería y cómo lo jugaríamos?",
+    "¿Cuál es tu recuerdo más travieso o excitante de nosotros hasta ahora?",
+    "Si tuvieras que describir nuestra química en una frase, ¿cuál sería?"
+];
+exports.verdadesPicantes = verdadesPicantes;
+
 const retosPicantes = [
     "📷 Manda una foto sexy o provocativa por el chat ahora mismo.",
     "🎙️ Manda una nota de voz de 10 segundos susurrándome algo coqueto al oído.",
@@ -132,73 +127,15 @@ const retosPicantes = [
     "🎥 graba un video provocativo y enviaselo a tu pareja, si se excita recibe una penalizacion",
     "💬 dile a tu pareja que te haga un reto provocativo y si se excita recibe una penalizacion",
     "🎥 graba un video provocativo y enviaselo a tu pareja, si se excita recibe una penalizacion",
-    "💬 reta a tu pareja a un desafio sin limites"
+    "💬reta a tu pareja a un desafio sin limites"
 ];
 
-// --- NUEVAS FUNCIONES AGREGADAS ---
-const razonesParaQuerte = [
-    "Me encanta tu sonrisa cada vez que te veo en pantalla. 😍",
-    "Adoro la forma en que me haces reír incluso en mis días difíciles.",
-    "Amo cómo apoyas mis sueños y confías en mí.",
-    "Amo tu voz cuando me hablas bonito por llamada.",
-    "Me apasiona la química tan única que tenemos a pesar de la distancia.",
-    "Amo lo cariñosa/o y especial que eres conmigo todos los días.",
-    "Amo cómo nos entendemos casi sin decir palabras."
-];
+// Listas en memoria para organizar cápsulas, metas y películas
+const capsulasTiempo = [];
+const metasPareja = [];
+const listaPelis = [];
 
-const apodosCoquetos = [
-    "Mi terroncito de azúcar 🍯", "Mi bombón picante 🌶️", "Mi cielito hermoso 🌌",
-    "Mi reina/rey consentida/o 👑", "Mi vida entera 💖", "Mi tentación favorita 😈"
-];
-
-const adivinanzasCanciones = [
-    "🎵 *Adivina la Canción:* 'And I will always love you...'\n¿Qué artista o canción es?",
-    "🎵 *Adivina la Frase:* 'Tú eres mi momento favorito del día.'\n¿Quién de los dos la dijo primero?"
-];
-
-const pelisSeriesRecomendadas = [
-    "🎬 *Película:* 'Your Name' (Anime / Romance) - Perfecta para ver a distancia.",
-    "🍿 *Serie:* 'La Casa de Papel' - Suspenso y maratón asegurado.",
-    "🎬 *Película:* 'About Time' - Un detalle hermoso sobre el amor y el tiempo."
-];
-
-const dadosPicantes = [
-    "🎲 *Dado Picante:* 'Susurra un secreto travieso' + 'En una nota de voz de 10 seg' 🔥",
-    "🎲 *Dado Picante:* 'Envía una foto coqueta' + 'Con la luz bajita' 🫣",
-    "🎲 *Dado Picante:* 'Haz una promesa atrevida' + 'Para cuando nos veamos en persona' 💋"
-];
-
-const adivinaMemes = [
-    "🖼️ *Adivina el Meme:* Un gato sentado en la mesa siendo regañado por una mujer. ¿Cómo se llama el meme?",
-    "🖼️ *Adivina el Meme:* Un perro sentado tranquilo en medio del fuego diciendo 'This is fine'."
-];
-
-const compatibilidadDiaria = [
-    "📊 *Test de Compatibilidad Hoy:* ¡Están al **99%**! Hoy es un día perfecto para una noche de juegos. 💕",
-    "📊 *Test de Compatibilidad Hoy:* ¡Sintonía al **100%**! La química está por las nubes. 🔥"
-];
-
-const tresVerdadesUnaMentira = [
-    "🧩 *3 Verdades y 1 Mentira:*\n1. Me encanta el café por la mañana.\n2. Sé bailar salsa profesionalmente.\n3. Me emociono cada vez que me llamas.\n4. Mi juego favorito es Free Fire.\n\n¿Cuál es la MENTIRA? 🤔"
-];
-
-const preguntasIncomodasCoquetas = [
-    "🫣 *Pregunta Coqueta:* ¿Qué fue lo primero que pensaste cuando viste mi foto por primera vez?",
-    "🌶️ *Pregunta Incómoda:* ¿Qué harías si de repente aparezco en tu puerta sin avisar?"
-];
-
-const cuponesAmor = [
-    "🎟️ *CUPÓN VIRTUAL:* Válido por 'Elegir la película o juego de hoy sin objeciones' 🍿",
-    "🎟️ *CUPÓN VIRTUAL:* Válido por 'Un masaje relajante acumulado para cuando nos veamos' 💆‍♂️💆‍♀️",
-    "🎟️ *CUPÓN VIRTUAL:* Válido por 'Una sesión de mimos y elogios por llamada' 💖"
-];
-
-const desafiosSensuales = [
-    "💋 *Desafío Sensual:* Envía un mensaje de voz de 5 segundos susurrando lo que más te gusta de mí.",
-    "🔥 *Desafío Sensual:* Manda una foto sosteniendo un letrero que diga algo provocativo."
-];
-
-// --- MENÚ PRINCIPAL CON TECLADO EXPANDIDO ---
+// --- MENÚ PRINCIPAL ---
 bot.onText(/\/start/, (msg) => {
     const opciones = {
         reply_markup: {
@@ -206,78 +143,71 @@ bot.onText(/\/start/, (msg) => {
                 ['🎮 Calendario LDR', '🎭 Reto de Imitación'],
                 ['💬 Preguntas Profundas', '🎲 Castigo para Llamada'],
                 ['🧠 Trivia de Pareja', '🔮 Bola 8 Mágica'],
-                ['🤔 ¿Qué prefieres?', '🔥 Verdad / Reto'],
-                ['💖 100 Razones', '❤️ Te Extraño'],
-                ['📹 Pase a Videollamada', '🫂 Beso/Abrazo Virtual'],
-                ['🎭 Estado de Ánimo', '🎰 Dado / Volado'],
-                ['🍿 Pelis / Series', '🏷️ Apodo Coqueto'],
-                ['🌶️ Dado Picante', '🎟️ Cupones de Amor'],
-                ['✨ Más Comandos (/ayuda)']
+                ['🤔 ¿Qué prefieres?', '🎰 Dado / Volado'],
+                ['🔥 Verdad / Reto']
             ],
             resize_keyboard: true
         }
     };
-    bot.sendMessage(msg.chat.id, "¡Llegó el desmadre! 💥\n\nPresiona los botones del menú o escribe `/ayuda` para ver la lista completa de comandos interactivos.", opciones);
+    bot.sendMessage(msg.chat.id, "Llegó el desmadre, ¿están listos para el caos?", opciones);
 });
 
-// --- MENÚ DE AYUDA Y LISTA COMPLETA DE COMANDOS ---
+// --- COMANDO /ayuda ---
 bot.onText(/\/ayuda/, (msg) => {
-    const ayudaTxt = `
-✨ **LISTA COMPLETA DE COMANDOS DISPONIBLES** ✨
+    const chatId = msg.chat.id;
+    const ayudaTxt = `✨ **LISTA DE COMANDOS DISPONIBLES** ✨\n\n` +
+                     `🎲 **Juegos y Diversión:**\n` +
+                     `• /volado - Lanza un dado o moneda.\n` +
+                     `• /aventura - Inicia una mini aventura.\n` +
+                     `• /compatibilidad - Revisa la compatibilidad del día.\n\n` +
+                     `📌 **Organizador y Recuerdos:**\n` +
+                     `• /capsula [mensaje] - Guarda un mensaje secreto en la cápsula.\n` +
+                     `• /vercapsula - Lee los mensajes guardados.\n` +
+                     `• /meta [meta] - Agrega una meta en pareja.\n` +
+                     `• /vermetas - Mira la lista de metas.\n` +
+                     `• /peli [nombre] - Agrega películas para ver juntos.\n` +
+                     `• /verpelis - Ver lista de películas guardadas.`;
 
-💌 **Afecto y Detalles:**
-• /razones - Muestra una razón de por qué te quiero.
-• /extraño - Envía una notificación instantánea de "Te extraño".
-• /videollamada - Alerta para pasar a videollamada.
-• /abrazo - Envia un abrazo o beso virtual.
-• /apodo - Generador de apodo coqueto del día.
-
-🎲 **Juegos y Diversión:**
-• /volado - Lanza un dado o moneda.
-• /aventura - Inicia una mini aventura de decisiones.
-• /adivina - Adivina la canción o frase.
-• /meme - Adivina el meme.
-• /compatibilidad - Revisa la compatibilidad del día.
-• /3v1m - Juega a 3 Verdades y 1 Mentira.
-• /puntos - Revisa tus puntos acumulados.
-
-📌 **Organizador y Recuerdos:**
-• /capsula [mensaje] - Guarda un mensaje secreto en la cápsula.
-• /vercapsula - Lee los mensajes guardados.
-• /meta [meta] - Agrega una meta/deseo en pareja.
-• /vermetas - Mira la lista de metas y deseos.
-• /peli [nombre] - Agrega o mira series/películas vistas.
-• /divisas [monto] - Convierte USD a EUR / moneda local.
-
-🔥 **Picante y Coqueteo:**
-• /dadopicante - Lanza un reto picante en combinación.
-• /preguntaIncomoda - Lanza una pregunta coqueta.
-• /cupon - Te entrega un cupón de amor canjeable.
-• /desafio - Un desafío sensual para la semana.
-• /secreto [mensaje] - Confesión anónima al bot.
-
-🤖 **Asistente AI:**
-• /ia [tu pregunta] - Asistente Gemini para resolver dudas juntos.
-`;
-    bot.sendMessage(msg.chat.id, ayudaTxt, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, ayudaTxt, { parse_mode: 'Markdown' });
 });
 
-// --- MANEJO DE MENSAJES AUTOMÁTICOS Y COMANDOS DEL MENU ---
-bot.on('message', async (msg) => {
+// --- RESPUESTAS DE MENÚ Y MENSAJES ---
+bot.on('message', (msg) => {
+    if (!msg.text) return;
     const chatId = msg.chat.id;
     const texto = msg.text;
 
-    if (!texto) return;
-
-    // RESPUESTAS AUTOMÁTICAS DIVERTIDAS
-    const textoMin = texto.toLowerCase();
-    if (textoMin.includes('te amo')) {
-        bot.sendMessage(chatId, "💖 ¡El bot detectó amor puro! Yo también los amo a ambos 🥰");
-    } else if (textoMin.includes('te extraño')) {
-        bot.sendMessage(chatId, "🥺 ¡Alguien por aquí está extrañando mucho! Mándense un abrazo virtual con `/abrazo`");
+    if (texto === '🎮 Calendario LDR') {
+        bot.sendMessage(chatId, obtenerCalendarioHoy(), { parse_mode: 'Markdown' });
     }
-if (texto === '🎰 Dado / Volado' || texto === '/volado') {
-        const resultadoMoneda = Math.random() < 0.5 ? "🪙 *Cara* (Gana el que eligió Cara)" : "🪙 *Cruz* (Gana el que eligió Cruz)";
+    if (texto === '🎭 Reto de Imitación') {
+        const imita = modoImitacion[Math.floor(Math.random() * modoImitacion.length)];
+        bot.sendMessage(chatId, imita, { parse_mode: 'Markdown' });
+    }
+    if (texto === '💬 Preguntas Profundas') {
+        const preg = preguntasProfundas[Math.floor(Math.random() * preguntasProfundas.length)];
+        bot.sendMessage(chatId, preg, { parse_mode: 'Markdown' });
+    }
+    if (texto === '🎲 Castigo para Llamada') {
+        const castigo = ruletaCastigosLlamada[Math.floor(Math.random() * ruletaCastigosLlamada.length)];
+        bot.sendMessage(chatId, `🎰 *Ruleta para el perdedor de la partida:*\n\n${castigo}`, { parse_mode: 'Markdown' });
+    }
+    if (texto === '🧠 Trivia de Pareja') {
+        const t = triviasDistancia[Math.floor(Math.random() * triviasDistancia.length)];
+        bot.sendMessage(chatId, t, { parse_mode: 'Markdown' });
+    }
+    if (texto === '🔮 Bola 8 Mágica') {
+        const r = respuestasBola8[Math.floor(Math.random() * respuestasBola8.length)];
+        bot.sendMessage(chatId, `Haz cualquier pregunta de SÍ o NO en voz alta... 🤔\n\n${r}`);
+    }
+    if (texto === '🤔 ¿Qué prefieres?') {
+        const qp = quePrefieresLDR[Math.floor(Math.random() * quePrefieresLDR.length)];
+        bot.sendMessage(chatId, qp);
+    }
+
+    // DADO Y VOLADO (CON RETOS INCLUIDOS)
+    if (texto === '🎰 Dado / Volado' || texto === '/volado') {
+        const resultadoMoneda = Math.random() < 0.5 ? "🪙 *Cara* (Gana Cara)" : "🪙 *Cruz* (Gana Cruz)";
         const dado = Math.floor(Math.random() * 6) + 1;
 
         const retosDado = {
@@ -296,15 +226,7 @@ if (texto === '🎰 Dado / Volado' || texto === '/volado') {
 
         bot.sendMessage(chatId, mensaje, { parse_mode: 'Markdown' });
     }
-    // BOTONES DEL TECLADO
-    if (texto === '🎮 Calendario LDR') bot.sendMessage(chatId, obtenerCalendarioHoy(), { parse_mode: 'Markdown' });
-    if (texto === '🎭 Reto de Imitación') bot.sendMessage(chatId, modoImitacion[Math.floor(Math.random() * modoImitacion.length)], { parse_mode: 'Markdown' });
-    if (texto === '💬 Preguntas Profundas') bot.sendMessage(chatId, preguntasProfundas[Math.floor(Math.random() * preguntasProfundas.length)], { parse_mode: 'Markdown' });
-    if (texto === '🎲 Castigo para Llamada') bot.sendMessage(chatId, `🎰 *Ruleta perdedora:*\n\n${ruletaCastigosLlamada[Math.floor(Math.random() * ruletaCastigosLlamada.length)]}`, { parse_mode: 'Markdown' });
-    if (texto === '🧠 Trivia de Pareja') bot.sendMessage(chatId, triviasDistancia[Math.floor(Math.random() * triviasDistancia.length)], { parse_mode: 'Markdown' });
-    if (texto === '🔮 Bola 8 Mágica') bot.sendMessage(chatId, `Haz tu pregunta en voz alta... 🤔\n\n${respuestasBola8[Math.floor(Math.random() * respuestasBola8.length)]}`);
-    if (texto === '🤔 ¿Qué prefieres?') bot.sendMessage(chatId, quePrefieresLDR[Math.floor(Math.random() * quePrefieresLDR.length)]);
-    
+
     if (texto === '🔥 Verdad / Reto') {
         bot.sendMessage(chatId, '🌶️ *Modo Picante:* ¿Qué eliges?', {
             reply_markup: {
@@ -315,166 +237,64 @@ if (texto === '🎰 Dado / Volado' || texto === '/volado') {
         });
     }
 
-    if (texto === '💖 100 Razones' || texto === '/razones') {
-        bot.sendMessage(chatId, `💖 *Razón para quererte:* \n\n${razonesParaQuerte[Math.floor(Math.random() * razonesParaQuerte.length)]}`);
+    // COMANDOS DE CÁPSULAS DE TIEMPO
+    if (texto.startsWith('/capsula ')) {
+        const contenido = texto.replace('/capsula ', '');
+        capsulasTiempo.push(contenido);
+        bot.sendMessage(chatId, "🔒 ¡Mensaje guardado con éxito en la cápsula del tiempo!");
+    } else if (texto === '/vercapsula') {
+        if (capsulasTiempo.length === 0) {
+            bot.sendMessage(chatId, "📦 La cápsula del tiempo está vacía por ahora.");
+        } else {
+            let res = "📜 *Mensajes en la cápsula:*\n\n";
+            capsulasTiempo.forEach((item, index) => res += `${index + 1}. ${item}\n`);
+            bot.sendMessage(chatId, res, { parse_mode: 'Markdown' });
+        }
     }
 
-    if (texto === '❤️ Te Extraño' || texto === '/extraño') {
-        bot.sendMessage(chatId, "📢 *NOTIFICACIÓN INSTANTÁNEA:* ¡Te están extrañando intensamente en este momento! 🥺❤️", { parse_mode: 'Markdown' });
+    // COMANDOS DE METAS
+    if (texto.startsWith('/meta ')) {
+        const meta = texto.replace('/meta ', '');
+        metasPareja.push(meta);
+        bot.sendMessage(chatId, "🎯 ¡Nueva meta agregada a la lista de deseos!");
+    } else if (texto === '/vermetas') {
+        if (metasPareja.length === 0) {
+            bot.sendMessage(chatId, "📌 Aún no han registrado metas juntos.");
+        } else {
+            let res = "✨ *Nuestras Metas Juntos:*\n\n";
+            metasPareja.forEach((item) => res += `• ${item}\n`);
+            bot.sendMessage(chatId, res, { parse_mode: 'Markdown' });
+        }
     }
 
-    if (texto === '📹 Pase a Videollamada' || texto === '/videollamada') {
-        bot.sendMessage(chatId, "📹 *¡ALERTA DE VIDEOLLAMADA!* Conéctate ahora mismo, te están esperando frente a la cámara. 🤳✨", { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '🫂 Beso/Abrazo Virtual' || texto === '/abrazo') {
-        bot.sendMessage(chatId, "🫂 *¡ABRAZO Y BESO VIRTUAL ENVIADO!* 💋\n\nSiente todo el cariño cruzando la pantalla.", { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '🎭 Estado de Ánimo') {
-        bot.sendMessage(chatId, '¿Cómo te sientes hoy?', {
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: '😄 Feliz', callback_data: 'animo_feliz' }, { text: '🥰 Romántico/a', callback_data: 'animo_romantico' }],
-                    [{ text: '😴 Cansado/a', callback_data: 'animo_cansado' }, { text: '🥺 Necesito mimos', callback_data: 'animo_mimos' }]
-                ]
-            }
-        });
-    }
-
-    if (texto === '🎰 Dado / Volado' || texto === '/volado') {
-        const resultadoMoneda = Math.random() < 0.5 ? "🪙 Cara" : "🪙 Cruz";
-        const dado = Math.floor(Math.random() * 6) + 1;
-        bot.sendMessage(chatId, `🎲 *Lanzamiento Mágico:*\n\n• **Moneda:** ${resultadoMoneda}\n• **Dado (1-6):** ${dado}`, { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '🍿 Pelis / Series') {
-        bot.sendMessage(chatId, pelisSeriesRecomendadas[Math.floor(Math.random() * pelisSeriesRecomendadas.length)], { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '🏷️ Apodo Coqueto' || texto === '/apodo') {
-        bot.sendMessage(chatId, `✨ *Tu apodo coqueto de hoy es:* ${apodosCoquetos[Math.floor(Math.random() * apodosCoquetos.length)]}`);
-    }
-
-    if (texto === '🌶️ Dado Picante' || texto === '/dadopicante') {
-        bot.sendMessage(chatId, dadosPicantes[Math.floor(Math.random() * dadosPicantes.length)], { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '🎟️ Cupones de Amor' || texto === '/cupon') {
-        bot.sendMessage(chatId, cuponesAmor[Math.floor(Math.random() * cuponesAmor.length)], { parse_mode: 'Markdown' });
-    }
-
-    if (texto === '✨ Más Comandos (/ayuda)') {
-        bot.sendMessage(chatId, "Escribe `/ayuda` para ver la lista completa con todos los comandos y herramientas.", { parse_mode: 'Markdown' });
+    // COMANDOS DE PELÍCULAS
+    if (texto.startsWith('/peli ')) {
+        const peli = texto.replace('/peli ', '');
+        listaPelis.push(peli);
+        bot.sendMessage(chatId, "🍿 ¡Película guardada para la próxima llamada!");
+    } else if (texto === '/verpelis') {
+        if (listaPelis.length === 0) {
+            bot.sendMessage(chatId, "🍿 La lista de películas está vacía.");
+        } else {
+            let res = "🍿 *Películas pendientes:*\n\n";
+            listaPelis.forEach((item, index) => res += `${index + 1}. ${item}\n`);
+            bot.sendMessage(chatId, res, { parse_mode: 'Markdown' });
+        }
     }
 });
 
-// --- COMANDOS CON PARÁMETROS Y FUNCIONES ESPECÍFICAS ---
-
-// Aventura Interactiva
-bot.onText(/\/aventura/, (msg) => {
-    bot.sendMessage(msg.chat.id, "🏰 *Elige tu Propia Aventura:*\n\nEstán atrapados en un castillo mágico a distancia. ¿Qué camino toman?", {
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: '🚪 Abrir puerta roja', callback_data: 'adv_roja' }, { text: '🗝️ Abrir puerta azul', callback_data: 'adv_azul' }]
-            ]
-        },
-        parse_mode: 'Markdown'
-    });
-});
-
-// Adivina Canción / Meme / Compatibilidad / 3V1M
-bot.onText(/\/adivina/, (msg) => bot.sendMessage(msg.chat.id, adivinanzasCanciones[Math.floor(Math.random() * adivinanzasCanciones.length)], { parse_mode: 'Markdown' }));
-bot.onText(/\/meme/, (msg) => bot.sendMessage(msg.chat.id, adivinaMemes[Math.floor(Math.random() * adivinaMemes.length)], { parse_mode: 'Markdown' }));
-bot.onText(/\/compatibilidad/, (msg) => bot.sendMessage(msg.chat.id, compatibilidadDiaria[Math.floor(Math.random() * compatibilidadDiaria.length)], { parse_mode: 'Markdown' }));
-bot.onText(/\/3v1m/, (msg) => bot.sendMessage(msg.chat.id, tresVerdadesUnaMentira[Math.floor(Math.random() * tresVerdadesUnaMentira.length)], { parse_mode: 'Markdown' }));
-bot.onText(/\/preguntaIncomoda/, (msg) => bot.sendMessage(msg.chat.id, preguntasIncomodasCoquetas[Math.floor(Math.random() * preguntasIncomodasCoquetas.length)], { parse_mode: 'Markdown' }));
-bot.onText(/\/desafio/, (msg) => bot.sendMessage(msg.chat.id, desafiosSensuales[Math.floor(Math.random() * desafiosSensuales.length)], { parse_mode: 'Markdown' }));
-
-// Buscador de Puntos
-bot.onText(/\/puntos/, (msg) => {
-    const uid = msg.from.id;
-    userPoints[uid] = (userPoints[uid] || 0) + 10;
-    bot.sendMessage(msg.chat.id, `🏆 *Puntos de Amor:* Tienes **${userPoints[uid]} puntos** acumulados por interactuar.`, { parse_mode: 'Markdown' });
-});
-
-// Cápsula del tiempo
-bot.onText(/\/capsula (.+)/, (msg, match) => {
-    capsuleStorage.push(match[1]);
-    bot.sendMessage(msg.chat.id, "📦 ¡Mensaje guardado con éxito en la Cápsula del Tiempo!");
-});
-bot.onText(/\/vercapsula/, (msg) => {
-    if (capsuleStorage.length === 0) return bot.sendMessage(msg.chat.id, "📦 La cápsula del tiempo está vacía por ahora.");
-    bot.sendMessage(msg.chat.id, `📦 *Cápsula del Tiempo:*\n\n` + capsuleStorage.map((m, i) => `${i+1}. ${m}`).join('\n'), { parse_mode: 'Markdown' });
-});
-
-// Metas y Deseos
-bot.onText(/\/meta (.+)/, (msg, match) => {
-    metasStorage.push(match[1]);
-    bot.sendMessage(msg.chat.id, "🎯 ¡Meta agregada a la lista de deseos!");
-});
-bot.onText(/\/vermetas/, (msg) => {
-    if (metasStorage.length === 0) return bot.sendMessage(msg.chat.id, "🎯 Aún no han guardado metas juntos.");
-    bot.sendMessage(msg.chat.id, `🎯 *Lista de Metas y Deseos:*\n\n` + metasStorage.map((m, i) => `• ${m}`).join('\n'), { parse_mode: 'Markdown' });
-});
-
-// Registro de Series Vistas
-bot.onText(/\/peli (.+)/, (msg, match) => {
-    seriesVistasStorage.push(match[1]);
-    bot.sendMessage(msg.chat.id, `🍿 ¡'${match[1]}' agregada a la lista de series/pelis vistas juntos!`);
-});
-
-// Confesión Anónima
-bot.onText(/\/secreto (.+)/, (msg, match) => {
-    bot.sendMessage(msg.chat.id, `🤫 *CONFESIÓN ANÓNIMA:* \n\n"${match[1]}"`, { parse_mode: 'Markdown' });
-});
-
-// Conversor de Monedas (Simulado)
-bot.onText(/\/divisas (.+)/, (msg, match) => {
-    const usd = parseFloat(match[1]);
-    if (isNaN(usd)) return bot.sendMessage(msg.chat.id, "Por favor ingresa un número válido. Ej: `/divisas 50`");
-    const eur = (usd * 0.92).toFixed(2);
-    bot.sendMessage(msg.chat.id, `🔱 *Conversor de Moneda:*\n\n💵 **$${usd} USD** equivalen aprox. a **€${eur} EUR**`, { parse_mode: 'Markdown' });
-});
-
-// VERDAD O RETO & CALLBACKS
+// --- VERDAD O RETO INLINE ---
 bot.on('callback_query', (query) => {
     const chatId = query.message.chat.id;
-    const data = query.data;
-
-    if (data === 'v') bot.sendMessage(chatId, `🫣 *VERDAD:* ${verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)]}`, { parse_mode: 'Markdown' });
-    if (data === 'r') bot.sendMessage(chatId, `🔥 *RETO PICANTE:* ${retosPicantes[Math.floor(Math.random() * retosPicantes.length)]}`, { parse_mode: 'Markdown' });
-
-    if (data.startsWith('animo_')) {
-        const tipo = data.split('_')[1];
-        bot.sendMessage(chatId, `🎭 *Estado de ánimo actualizado:* Tu pareja acaba de marcar que se siente **${tipo.toUpperCase()}** hoy. 💖`, { parse_mode: 'Markdown' });
+    if (query.data === 'v') {
+        const v = verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)];
+        bot.sendMessage(chatId, `🫣 *VERDAD:* ${v}`, { parse_mode: 'Markdown' });
     }
-
-    if (data === 'adv_roja') bot.sendMessage(chatId, "🚪 Entraron a la habitación roja y encontraron un cofre con 100 besos virtuales. 💋");
-    if (data === 'adv_azul') bot.sendMessage(chatId, "🗝️ La puerta azul los llevó a una cita virtual con antorchas y música romántica. 🎶");
+    if (query.data === 'r') {
+        const r = retosPicantes[Math.floor(Math.random() * retosPicantes.length)];
+        bot.sendMessage(chatId, `🔥 *RETO PICANTE:* ${r}`, { parse_mode: 'Markdown' });
+    }
+    bot.answerCallbackQuery(query.id);
 });
 
-// --- COMANDO ASISTENTE IA GEMINI ---
-bot.onText(/\/ia (.+)/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const duda = match[1];
-
-  if (!ai) {
-    return bot.sendMessage(chatId, "⚠️ El asistente inteligente no está configurado. Define `GEMINI_API_KEY` en Render.");
-  }
-
-  try {
-    bot.sendChatAction(chatId, 'typing');
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Eres un asistente virtual carismático y amigable para una pareja a distancia. Responde esta duda: ${duda}`
-    });
-
-    bot.sendMessage(chatId, `🤖 *Respuesta:* \n\n${response.text}`, { parse_mode: 'Markdown' });
-  } catch (error) {
-    console.error("Error al consultar Gemini:", error);
-    bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
-  }
-});
-
-console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
+console.log('¡Bot actualizado y encendido! 🤖🎉');
