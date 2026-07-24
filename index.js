@@ -1,6 +1,15 @@
+const http = require('http');
+const port = process.env.PORT || 3000;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot activo 24/7');
+}).listen(port, () => {
+  console.log(`Servidor web escuchando en el puerto ${port}`);
+});
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
 
-const token = '8754100033:AAFJqB0DfHvwLLMQHV-qFkbYMLI1XkT8hZo';
+const token = process.env.TELEGRAM_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 // --- CALENDARIO DINÁMICO A DISTANCIA ---
