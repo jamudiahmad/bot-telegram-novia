@@ -2,7 +2,13 @@ const http = require('http');
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
 const axios = require('axios');
 const { GoogleGenAI } = require('@google/genai');
-const { verdadesPicantes } = require('./verdadesPicantes');
+const verdadesPicantes = [
+    "¿Qué fue lo primero que pensaste cuando viste una foto mía por primera vez?",
+    "¿Cuál es tu fantasía o momento más coqueto que quisieras vivir cuando nos veamos?",
+    "¿Qué prenda de vestir mía te parece la más atractiva cuando nos vemos por llamada?",
+    "Si tuvieras que describir nuestro nivel de química en una palabra, ¿cuál sería?",
+    "¿Qué es algo travieso que has pensado sobre mí y no me has contado?",
+];
 
 // --- SERVIDOR HTTP PA' MANTENER RENDER ACTIVO ---
 const port = process.env.PORT || 3000;
