@@ -111,7 +111,6 @@ function obtenerCalendarioHoy() {
 
     return `🗓️ *CALENDARIO A DISTANCIA* ${tipoSemana}\n\n👉 *Hoy toca:* \n${juegoHoy}\n\n_(Rota automáticamente cada 5 semanas para romper la rutina)_`;
 }
-
 // --- BANCOS DE DATOS Y NUEVAS FUNCIONES ---
 const modoImitacion = [
     "🎭 *Reto de Imitación (2 Minutos):*\nAmbos deben hablar en la llamada usando un **acento dramático de telenovela**.",
