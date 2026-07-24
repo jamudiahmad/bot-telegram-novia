@@ -2,7 +2,6 @@ const http = require('http');
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
 const axios = require('axios');
 const { GoogleGenAI } = require('@google/genai');
-const { verdadesPicantes } = require('./verdadesPicantes');
 
 // --- SERVIDOR HTTP PA' MANTENER RENDER ACTIVO ---
 const port = process.env.PORT || 3000;
