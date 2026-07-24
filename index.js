@@ -104,12 +104,12 @@ function obtenerCalendarioHoy() {
     };
 
     const calendarios = [calendarioA, calendarioB, calendarioC, calendarioD, calendarioE];
-    const etiquetas = ["🅰️ (Semana A)", "🅱️ (Semana B)", "🆂 (Semana C)", "🅳 (Semana D)", "🅴 (Semana E)"];
+    const etiquetas = ["Semana A", "Semana B", "Semana C", "Semana D", "Semana E"];
 
     const tipoSemana = etiquetas[indiceSemana];
     const juegoHoy = calendarios[indiceSemana][diaSemana];
 
-    return `🗓️ *CALENDARIO A DISTANCIA* ${tipoSemana}\n\n👉 *Hoy toca:* \n${juegoHoy}\n\n_(Rota automáticamente cada 5 semanas para romper la rutina)_`;
+    return `🗓️ *CALENDARIO A DISTANCIA* (${tipoSemana})\n\n👉 *Hoy toca:* \n${juegoHoy}\n\n_(Rota automáticamente cada 5 semanas para romper la rutina)_`;
 }
 // --- BANCOS DE DATOS Y NUEVAS FUNCIONES ---
 const modoImitacion = [
@@ -370,8 +370,6 @@ const verdadesPicantes = [
     "Si tuvieras que describir nuestra química en una frase, ¿cuál sería?"
 
 ];
-
-exports.verdadesPicantes = verdadesPicantes;
 
 const retosPicantes = [
 
