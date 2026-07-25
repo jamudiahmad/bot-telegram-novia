@@ -1187,17 +1187,17 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
     console.error("Error al consultar Gemini:", error);
     bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
   }
-});
+}); // Cierre de bot.on('message')
 
 console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
-
+});
 // Manejador para los botones interactivos de Verdad / Reto
-bot.on('callback_query', (query) => { });
+bot.on('callback_query', (query) => {
     const chatId = query.message.chat.id;
 
     if (query.data === 'v') {
         const verdad = verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)];
-        bot.sendMessage(chatId, `🗣️ *VERDAD:* \n\n${verdad}`, { parse_mode: 'Markdown' });
+        bot.sendMessage(chatId, `🔮 *VERDAD:* \n\n${verdad}`, { parse_mode: 'Markdown' });
     } else if (query.data === 'r') {
         const reto = retosPicantes[Math.floor(Math.random() * retosPicantes.length)];
         bot.sendMessage(chatId, `🔥 *RETO:* \n\n${reto}`, { parse_mode: 'Markdown' });
