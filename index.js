@@ -1158,22 +1158,24 @@ bot.on('callback_query', (query) => {
 
 // --- COMANDO ASISTENTE IA GEMINI ---
 bot.onText(/\/ia (.+)/, async (msg, match) => {
-        const chatId = msg.chat.id;
-        const prompt = match[1];
+    const chatId = msg.chat.id;
+    const prompt = match[1];
 
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.0-flash',
-                contents: prompt,
-            });
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: prompt,
+        });
 
-            bot.sendMessage(chatId, `🤖 *Respuesta:* \n\n${response.text}`, { parse_mode: 'Markdown' });
-        } catch (error) {
-            console.error("Error al consultar Gemini:", error);
-            bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
-        }
-    });
-}); // Cierre de bot.on('message')
+        const respuestaTexto = response.text || "No se pudo obtener una respuesta.";
+        bot.sendMessage(chatId, `🤖 *Respuesta:*\n\n${respuestaTexto}`);
+    } catch (error) {
+        console.error("Error al consultar Gemini:", error);
+        bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
+    }
+});
+});
+// Cierre de bot.on('message')
 
 console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
 
