@@ -21,7 +21,7 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 let genAI;
 if (GEMINI_API_KEY) {
-    genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    genAI = new GoogleGenerativeAI(GEMINI_API_KEY, { apiVersion: 'v1' });
 }
 const bot = new TelegramBot(token, { polling: true });
 
@@ -1166,7 +1166,7 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
     const prompt = match[1];
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const respuestaTexto = response.text();
