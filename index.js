@@ -1000,7 +1000,7 @@ if (texto === '💖 100 Razones' || texto === '/razones') {
     }
 
     // --- COMANDO DE CLIMA Y HORA LOCAL ---
-if (texto === '🌞 clima/hora local' || texto === 'clima/hora local' || texto === '/clima') {
+if (texto === '☀️ clima/hora local' || texto === '🌞 clima/hora local' || texto === 'clima/hora local' || texto === '/clima') {
     // Calculamos la hora para ambas zonas horarias
     const horaVE = new Date().toLocaleTimeString('es-VE', { 
         timeZone: 'America/Caracas', 
