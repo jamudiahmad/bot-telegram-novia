@@ -961,7 +961,6 @@ bot.on('message', async (msg) => {
     if (texto === '🧠 Trivia de Pareja') bot.sendMessage(chatId, triviasDistancia[Math.floor(Math.random() * triviasDistancia.length)], { parse_mode: 'Markdown' });
     if (texto === '🔮 Bola 8 Mágica') bot.sendMessage(chatId, `Haz tu pregunta en voz alta... 🤔\n\n${respuestasBola8[Math.floor(Math.random() * respuestasBola8.length)]}`);
     if (texto === '🤔 ¿Qué prefieres?') bot.sendMessage(chatId, quePrefieresLDR[Math.floor(Math.random() * quePrefieresLDR.length)]);
-    if (texto === '☀️ clima/hora local') bot.sendMessage(chatId, `⏰ *Hora Local:* ${new Date().toLocaleTimeString()}\n🌤️ *Clima:* Soleado`);
     if (texto === '🔥 Verdad / Reto') {
         bot.sendMessage(chatId, '🌶️ *Modo Picante:* ¿Qué eliges?', {
             reply_markup: {
