@@ -1165,7 +1165,7 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash', // <--- Usa 'gemini-2.5-flash' o 'gemini-1.5-flash-latest'
+            model: 'gemini-2.5-flash',
             contents: prompt,
         });
 
@@ -1173,7 +1173,10 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
         bot.sendMessage(chatId, `🤖 *Respuesta:*\n\n${respuestaTexto}`);
     } catch (error) {
         console.error("Error al consultar Gemini:", error);
-        bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
+        
+        // Muestra el mensaje de error real en Telegram
+        const mensajeError = error?.message || "Error desconocido";
+        bot.sendMessage(chatId, `⚠️ *Error exacto:* ${mensajeError}`);
     }
 });
 // Cierre de bot.on('message')
