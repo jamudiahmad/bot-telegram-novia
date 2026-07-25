@@ -987,74 +987,67 @@ if (texto === '💖 100 Razones' || texto === '/razones') {
         bot.sendMessage(chatId, "🫂 *¡ABRAZO Y BESO VIRTUAL ENVIADO!* 💋\n\nSiente todo el cariño cruzando la pantalla.", { parse_mode: 'Markdown' });
     }
 
-    if (texto === '🎭 Estado de Ánimo') {
+   if (texto === '🎭 Estado de Ánimo') {
         bot.sendMessage(chatId, '¿Cómo te sientes hoy?', {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: '😄 Feliz', callback_data: 'animo_feliz' }, { text: '🥰 Romántico/a', callback_data: 'animo_romantico' }],
-                    [{ text: '😴 Cansado/a', callback_data: 'animo_cansado' }, { text: '🥺 Necesito mimos', callback_data: 'animo_mimos' }]
+                    [{ text: '🤩 Feliz', callback_data: 'animo_feliz' }, { text: '🥰 Romántico/a', callback_data: 'animo_romantico' }],
+                    [{ text: '😴 Cansado/a', callback_data: 'animo_cansado' }, { text: '🥺 Necesito un abrazo', callback_data: 'animo_abrazo' }]
                 ]
             }
-        }
-    );
-    }
-
-    // --- COMANDO DE CLIMA Y HORA LOCAL ---
-if (texto === '☀️ clima/hora local' || texto === '🌞 clima/hora local' || texto === 'clima/hora local' || texto === '/clima') {
-    // Calculamos la hora para ambas zonas horarias
-    const horaVE = new Date().toLocaleTimeString('es-VE', { 
-        timeZone: 'America/Caracas', 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-    });
-
-    const horaMX = new Date().toLocaleTimeString('es-MX', { 
-        timeZone: 'America/Mexico_City', 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-    });
-
-    const apiKey = process.env.OPENWEATHER_API_KEY;
-
-    if (apiKey) {
-        // Consultamos el clima para ambas ciudades (Caracas y Ciudad de México)
-        Promise.all([
-            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Caracas&appid=${apiKey}&units=metric&lang=es`),
-            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Mexico City&appid=${apiKey}&units=metric&lang=es`)
-        ])
-        .then(([resVE, resMX]) => {
-            const tempVE = Math.round(resVE.data.main.temp);
-            const descVE = resVE.data.weather[0].description;
-
-            const tempMX = Math.round(resMX.data.main.temp);
-            const descMX = resMX.data.weather[0].description;
-
-            const mensaje = `🕒 *HORA Y CLIMA ACTUAL*\n\n` +
-                            `🇻🇪 *Venezuela:* ${horaVE}\n` +
-                            `🌤️ *Clima (Caracas):* ${tempVE}°C, ${descVE}\n\n` +
-                            `🇲🇽 *México:* ${horaMX}\n` +
-                            `🌤️ *Clima (CDMX):* ${tempMX}°C, ${descMX}`;
-
-            bot.sendMessage(chatId, mensaje, { parse_mode: 'Markdown' });
-        })
-        .catch(() => {
-            // Si falla la API del clima, responde al menos con las dos horas
-            const mensajeError = `🕒 *HORA ACTUAL*\n\n` +
-                                 `🇻🇪 *Venezuela:* ${horaVE}\n` +
-                                 `🇲🇽 *México:* ${horaMX}\n\n` +
-                                 `⚠️ _No se pudo obtener el clima en este momento._`;
-            bot.sendMessage(chatId, mensajeError, { parse_mode: 'Markdown' });
         });
-    } else {
-        // Si no tienes API Key configurada
-        const mensajeSoloHora = `🕒 *HORA ACTUAL*\n\n` +
-                                `🇻🇪 *Venezuela:* ${horaVE}\n` +
-                                `🇲🇽 *México:* ${horaMX}`;
-        bot.sendMessage(chatId, mensajeSoloHora, { parse_mode: 'Markdown' });
     }
-}
+// --- COMANDO DE CLIMA Y HORA LOCAL ---
+    if (texto === '☀️ clima/hora local' || texto === '🌞 clima/hora local' || texto === 'clima/hora local' || texto === '/clima') {
+        const horaVE = new Date().toLocaleTimeString('es-VE', { 
+            timeZone: 'America/Caracas', 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
+
+        const horaMX = new Date().toLocaleTimeString('es-MX', { 
+            timeZone: 'America/Mexico_City', 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: true 
+        });
+
+        const apiKey = process.env.OPENWEATHER_API_KEY;
+
+        if (apiKey) {
+            Promise.all([
+                axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Caracas&appid=${apiKey}&units=metric&lang=es`),
+                axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Mexico City&appid=${apiKey}&units=metric&lang=es`)
+            ])
+            .then(([resVE, resMX]) => {
+                const tempVE = Math.round(resVE.data.main.temp);
+                const descVE = resVE.data.weather[0].description;
+                const tempMX = Math.round(resMX.data.main.temp);
+                const descMX = resMX.data.weather[0].description;
+
+                const mensaje = `🕒 *HORA Y CLIMA ACTUAL*\n\n` +
+                                `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                                `🌤️ *Clima (Caracas):* ${tempVE}°C, ${descVE}\n\n` +
+                                `🇲🇽 *México:* ${horaMX}\n` +
+                                `🌤️ *Clima (CDMX):* ${tempMX}°C, ${descMX}`;
+
+                bot.sendMessage(chatId, mensaje, { parse_mode: 'Markdown' });
+            })
+            .catch(() => {
+                const mensajeError = `🕒 *HORA ACTUAL*\n\n` +
+                                     `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                                     `🇲🇽 *México:* ${horaMX}\n\n` +
+                                     `⚠️ _No se pudo obtener el clima en este momento._`;
+                bot.sendMessage(chatId, mensajeError, { parse_mode: 'Markdown' });
+            });
+        } else {
+            const mensajeSoloHora = `🕒 *HORA ACTUAL*\n\n` +
+                                    `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                                    `🇲🇽 *México:* ${horaMX}`;
+            bot.sendMessage(chatId, mensajeSoloHora, { parse_mode: 'Markdown' });
+        }
+    }
 // BOTÓN DE TECLADO: DADO / VOLADO
     if (texto === '🎰 Dado / Volado') {
         bot.sendMessage(chatId, lanzarDadoYVolado(), { parse_mode: 'Markdown' });
@@ -1168,29 +1161,25 @@ bot.on('callback_query', (query) => {
 
 // --- COMANDO ASISTENTE IA GEMINI ---
 bot.onText(/\/ia (.+)/, async (msg, match) => {
-  const chatId = msg.chat.id;
-  const duda = match[1];
+        const chatId = msg.chat.id;
+        const prompt = match[1];
 
-  if (!ai) {
-    return bot.sendMessage(chatId, "⚠️ El asistente inteligente no está configurado. Define `GEMINI_API_KEY` en Render.");
-  }
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+            });
 
-  try {
-    bot.sendChatAction(chatId, 'typing');
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `Eres un asistente virtual carismático y amigable para una pareja a distancia. Responde esta duda: ${duda}`
+            bot.sendMessage(chatId, `🤖 *Respuesta:* \n\n${response.text}`, { parse_mode: 'Markdown' });
+        } catch (error) {
+            console.error("Error al consultar Gemini:", error);
+            bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
+        }
     });
-
-    bot.sendMessage(chatId, `🤖 *Respuesta:* \n\n${response.text}`, { parse_mode: 'Markdown' });
-  } catch (error) {
-    console.error("Error al consultar Gemini:", error);
-    bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
-  }
 }); // Cierre de bot.on('message')
 
 console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
-});
+
 // Manejador para los botones interactivos de Verdad / Reto
 bot.on('callback_query', (query) => {
     const chatId = query.message.chat.id;
