@@ -882,7 +882,7 @@ bot.onText(/\/start/, (msg) => {
                 ['🎭 Estado de Ánimo', '🎰 Dado / Volado'],
                 ['🍿 Pelis / Series', '🏷️ Apodo Coqueto'],
                 ['🌶️ Dado Picante', '🎟️ Cupones de Amor'],
-                ['☀️ clima/hora local']
+                ['☀️ clima/hora local'],
                 ['✨ Más Comandos (/ayuda)']
             ],
             resize_keyboard: true
@@ -961,7 +961,7 @@ bot.on('message', async (msg) => {
     if (texto === '🧠 Trivia de Pareja') bot.sendMessage(chatId, triviasDistancia[Math.floor(Math.random() * triviasDistancia.length)], { parse_mode: 'Markdown' });
     if (texto === '🔮 Bola 8 Mágica') bot.sendMessage(chatId, `Haz tu pregunta en voz alta... 🤔\n\n${respuestasBola8[Math.floor(Math.random() * respuestasBola8.length)]}`);
     if (texto === '🤔 ¿Qué prefieres?') bot.sendMessage(chatId, quePrefieresLDR[Math.floor(Math.random() * quePrefieresLDR.length)]);
-    
+    if (texto === '☀️ hora/clima') bot.sendMessage(chatId, `⏰ *Hora Local:* ${new Date().toLocaleTimeString()}\n🌤️ *Clima:* Soleado`);
     if (texto === '🔥 Verdad / Reto') {
         bot.sendMessage(chatId, '🌶️ *Modo Picante:* ¿Qué eliges?', {
             reply_markup: {
@@ -995,10 +995,67 @@ if (texto === '💖 100 Razones' || texto === '/razones') {
                     [{ text: '😴 Cansado/a', callback_data: 'animo_cansado' }, { text: '🥺 Necesito mimos', callback_data: 'animo_mimos' }]
                 ]
             }
-        });
+        }
+    );
     }
 
-    // BOTÓN DE TECLADO: DADO / VOLADO
+    // --- COMANDO DE CLIMA Y HORA LOCAL ---
+if (texto === '🌞 clima/hora local' || texto === 'clima/hora local' || texto === '/clima') {
+    // Calculamos la hora para ambas zonas horarias
+    const horaVE = new Date().toLocaleTimeString('es-VE', { 
+        timeZone: 'America/Caracas', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+    });
+
+    const horaMX = new Date().toLocaleTimeString('es-MX', { 
+        timeZone: 'America/Mexico_City', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+    });
+
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+
+    if (apiKey) {
+        // Consultamos el clima para ambas ciudades (Caracas y Ciudad de México)
+        Promise.all([
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Caracas&appid=${apiKey}&units=metric&lang=es`),
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=Mexico City&appid=${apiKey}&units=metric&lang=es`)
+        ])
+        .then(([resVE, resMX]) => {
+            const tempVE = Math.round(resVE.data.main.temp);
+            const descVE = resVE.data.weather[0].description;
+
+            const tempMX = Math.round(resMX.data.main.temp);
+            const descMX = resMX.data.weather[0].description;
+
+            const mensaje = `🕒 *HORA Y CLIMA ACTUAL*\n\n` +
+                            `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                            `🌤️ *Clima (Caracas):* ${tempVE}°C, ${descVE}\n\n` +
+                            `🇲🇽 *México:* ${horaMX}\n` +
+                            `🌤️ *Clima (CDMX):* ${tempMX}°C, ${descMX}`;
+
+            bot.sendMessage(chatId, mensaje, { parse_mode: 'Markdown' });
+        })
+        .catch(() => {
+            // Si falla la API del clima, responde al menos con las dos horas
+            const mensajeError = `🕒 *HORA ACTUAL*\n\n` +
+                                 `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                                 `🇲🇽 *México:* ${horaMX}\n\n` +
+                                 `⚠️ _No se pudo obtener el clima en este momento._`;
+            bot.sendMessage(chatId, mensajeError, { parse_mode: 'Markdown' });
+        });
+    } else {
+        // Si no tienes API Key configurada
+        const mensajeSoloHora = `🕒 *HORA ACTUAL*\n\n` +
+                                `🇻🇪 *Venezuela:* ${horaVE}\n` +
+                                `🇲🇽 *México:* ${horaMX}`;
+        bot.sendMessage(chatId, mensajeSoloHora, { parse_mode: 'Markdown' });
+    }
+}
+// BOTÓN DE TECLADO: DADO / VOLADO
     if (texto === '🎰 Dado / Volado') {
         bot.sendMessage(chatId, lanzarDadoYVolado(), { parse_mode: 'Markdown' });
     }
@@ -1022,7 +1079,7 @@ if (texto === '💖 100 Razones' || texto === '/razones') {
     if (texto === '✨ Más Comandos (/ayuda)') {
         bot.sendMessage(chatId, "Escribe `/ayuda` para ver la lista completa con todos los comandos y herramientas.", { parse_mode: 'Markdown' });
     }
-});
+
 
 // --- COMANDOS CON PARÁMETROS Y FUNCIONES ESPECÍFICAS ---
 
@@ -1135,7 +1192,7 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
 console.log('¡Bot actualizado y listo con 23+ nuevas funciones! 🤖🎉');
 
 // Manejador para los botones interactivos de Verdad / Reto
-bot.on('callback_query', (query) => {
+bot.on('callback_query', (query) => { });
     const chatId = query.message.chat.id;
 
     if (query.data === 'v') {
