@@ -21,7 +21,7 @@ const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 let genAI;
 if (GEMINI_API_KEY) {
-    genAI = new GoogleGenerativeAI(GEMINI_API_KEY, { apiVersion: 'v1' });
+    genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 }
 const bot = new TelegramBot(token, { polling: true });
 
@@ -1166,12 +1166,26 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
     const prompt = match[1];
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const respuestaTexto = response.text();
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            }
+        );
 
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error.message);
+        }
+
+        const respuestaTexto = data.candidates[0].content.parts[0].text;
         bot.sendMessage(chatId, `🤖 *Respuesta:*\n\n${respuestaTexto}`);
+
     } catch (error) {
         console.error("Error al consultar Gemini:", error);
         const mensajeError = error?.message || "Error desconocido";
