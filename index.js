@@ -21,10 +21,6 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const bot = new TelegramBot(token, { polling: true });
 
-let ai;
-if (GEMINI_API_KEY) {
-  ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-}
 
 // --- BASES DE DATOS EN MEMORIA (ALMACENAMIENTO DE DATOS) ---
 const capsuleStorage = [];     // Cápsula del tiempo / Buzón
