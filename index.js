@@ -1167,7 +1167,7 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
 
     try {
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
