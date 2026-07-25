@@ -3,6 +3,8 @@ const http = require('http');
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
 const { GoogleGenAI } = require('@google/genai');
 
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
 // --- SERVIDOR HTTP PA' MANTENER RENDER ACTIVO ---
 const port = process.env.PORT || 3000;
 http.createServer((req, res) => {
