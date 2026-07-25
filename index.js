@@ -1166,17 +1166,14 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
     const prompt = match[1];
 
     try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-1.5-flash-001',
-            contents: prompt,
-        });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const respuestaTexto = response.text();
 
-        const respuestaTexto = response.text || "No se pudo obtener texto de la respuesta.";
         bot.sendMessage(chatId, `🤖 *Respuesta:*\n\n${respuestaTexto}`);
     } catch (error) {
         console.error("Error al consultar Gemini:", error);
-        
-        // Muestra el mensaje de error real en Telegram
         const mensajeError = error?.message || "Error desconocido";
         bot.sendMessage(chatId, `⚠️ *Error exacto:* ${mensajeError}`);
     }
