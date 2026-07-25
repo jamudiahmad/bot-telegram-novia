@@ -882,6 +882,7 @@ bot.onText(/\/start/, (msg) => {
                 ['🎭 Estado de Ánimo', '🎰 Dado / Volado'],
                 ['🍿 Pelis / Series', '🏷️ Apodo Coqueto'],
                 ['🌶️ Dado Picante', '🎟️ Cupones de Amor'],
+                ['☀️ clima/hora local']
                 ['✨ Más Comandos (/ayuda)']
             ],
             resize_keyboard: true
