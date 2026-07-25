@@ -3,7 +3,7 @@ const http = require('http');
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
 const { GoogleGenAI } = require('@google/genai');
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let ai;
 
 // --- SERVIDOR HTTP PA' MANTENER RENDER ACTIVO ---
 const port = process.env.PORT || 3000;
@@ -17,8 +17,10 @@ http.createServer((req, res) => {
 // --- INICIALIZACIÓN BOT & IA ---
 const token = process.env.TELEGRAM_TOKEN;
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+if (GEMINI_API_KEY) {
+    ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+}
 const bot = new TelegramBot(token, { polling: true });
 
 
@@ -1155,7 +1157,7 @@ bot.on('callback_query', (query) => {
     if (data === 'adv_roja') bot.sendMessage(chatId, "🚪 Entraron a la habitación roja y encontraron un cofre con 100 besos virtuales. 💋");
     if (data === 'adv_azul') bot.sendMessage(chatId, "🗝️ La puerta azul los llevó a una cita virtual con antorchas y música romántica. 🎶");
 });
-
+});
 // --- COMANDO ASISTENTE IA GEMINI ---
 bot.onText(/\/ia (.+)/, async (msg, match) => {
     const chatId = msg.chat.id;
@@ -1163,17 +1165,16 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-1.5-flash',
+            model: 'gemini-2.5-flash', // <--- Usa 'gemini-2.5-flash' o 'gemini-1.5-flash-latest'
             contents: prompt,
         });
 
-        const respuestaTexto = response.text || "No se pudo obtener una respuesta.";
+        const respuestaTexto = response.text || "No se pudo obtener texto de la respuesta.";
         bot.sendMessage(chatId, `🤖 *Respuesta:*\n\n${respuestaTexto}`);
     } catch (error) {
         console.error("Error al consultar Gemini:", error);
         bot.sendMessage(chatId, "Ups, ocurrió un error al consultar la respuesta.");
     }
-});
 });
 // Cierre de bot.on('message')
 
