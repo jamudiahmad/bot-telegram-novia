@@ -1,3 +1,4 @@
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const axios = require('axios');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api').default || require('node-telegram-bot-api');
@@ -17,9 +18,10 @@ http.createServer((req, res) => {
 // --- INICIALIZACIÓN BOT & IA ---
 const token = process.env.TELEGRAM_TOKEN;
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+let genAI;
 if (GEMINI_API_KEY) {
-    ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 }
 const bot = new TelegramBot(token, { polling: true });
 
