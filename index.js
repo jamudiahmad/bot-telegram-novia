@@ -1166,7 +1166,7 @@ bot.onText(/\/ia (.+)/, async (msg, match) => {
     const prompt = match[1];
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const respuestaTexto = response.text();
