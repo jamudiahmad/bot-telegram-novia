@@ -1134,7 +1134,7 @@ bot.onText(/\/peli (.+)/, (msg, match) => {
 bot.onText(/\/secreto (.+)/, (msg, match) => {
     bot.sendMessage(msg.chat.id, `🤫 *CONFESIÓN ANÓNIMA:* \n\n"${match[1]}"`, { parse_mode: 'Markdown' });
 });
-
+});
 // Conversor de Monedas (Simulado)
 bot.onText(/\/divisas (.+)/, (msg, match) => {
     const usd = parseFloat(match[1]);
@@ -1144,21 +1144,26 @@ bot.onText(/\/divisas (.+)/, (msg, match) => {
 });
 
 // VERDAD O RETO & CALLBACKS
-bot.on('callback_query', (query) => {
+bot.on('callback_query', async (query) => {
     const chatId = query.message.chat.id;
     const data = query.data;
 
-    if (data === 'v') bot.sendMessage(chatId, `🫣 *VERDAD:* ${verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)]}`, { parse_mode: 'Markdown' });
+    // 1. OBLIGATORIO: Detiene el reloj de carga en Telegram y frena los reintentos
+    await bot.answerCallbackQuery(query.id);
+
+    // Lógica para Verdad o Reto
+    if (data === 'v') bot.sendMessage(chatId, `🎭 *VERDAD:* ${verdadesPicantes[Math.floor(Math.random() * verdadesPicantes.length)]}`, { parse_mode: 'Markdown' });
     if (data === 'r') bot.sendMessage(chatId, `🔥 *RETO PICANTE:* ${retosPicantes[Math.floor(Math.random() * retosPicantes.length)]}`, { parse_mode: 'Markdown' });
 
+    // Lógica para Estado de Ánimo
     if (data.startsWith('animo_')) {
-        const tipo = data.split('_')[1];
-        bot.sendMessage(chatId, `🎭 *Estado de ánimo actualizado:* Tu pareja acaba de marcar que se siente **${tipo.toUpperCase()}** hoy. 💖`, { parse_mode: 'Markdown' });
+        const tipo = data.split('_')[1].toUpperCase();
+        bot.sendMessage(chatId, `🎭 *Estado de ánimo actualizado:* Tu pareja acaba de marcar que se siente ${tipo} hoy. ✨`, { parse_mode: 'Markdown' });
     }
 
-    if (data === 'adv_roja') bot.sendMessage(chatId, "🚪 Entraron a la habitación roja y encontraron un cofre con 100 besos virtuales. 💋");
-    if (data === 'adv_azul') bot.sendMessage(chatId, "🗝️ La puerta azul los llevó a una cita virtual con antorchas y música romántica. 🎶");
-});
+    // Lógica para Aventura
+    if (data === 'adv_roja') bot.sendMessage(chatId, "🚪 Entraron a la habitación roja y encontraron...");
+    if (data === 'adv_azul') bot.sendMessage(chatId, "🔑 La puerta azul los llevó a una cita virtual...");
 });
 // --- COMANDO ASISTENTE IA GEMINI ---
 bot.onText(/\/ia (.+)/, async (msg, match) => {
